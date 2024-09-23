@@ -9,20 +9,18 @@ from utils import LOG
 from openai import OpenAI
 
 class OpenAIModel(Model):
-    def __init__(self, model: str, api_key: str):
+    def __init__(self, model: str):
         self.model = model
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.client = OpenAI()
 
-    def make_request(self, prompt):
+    def make_request(self, prompt_messages: list):
         attempts = 0
         while attempts < 3:
             try:
                 if self.model == "gpt-3.5-turbo":
                     response = self.client.chat.completions.create(
                         model=self.model,
-                        messages=[
-                            {"role": "user", "content": prompt}
-                        ]
+                        messages= prompt_messages
                     )
                     translation = response.choices[0].message.content.strip()
                 else:
